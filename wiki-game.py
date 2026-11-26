@@ -1,6 +1,19 @@
 import wikipediaapi
+import random
 
 LINKS_SHOWN = 50
+PAGES_LIST = [
+    'Python (programming language)',
+    'Albert Einstein',
+    'Ukulele',
+    'Australia',
+    'Nvidia',
+    'Bible',
+    'Chocolate',
+    'Running',
+    'Chair',
+    'Michael Jordan'
+]
 
 """
 API help:
@@ -48,8 +61,14 @@ def play_round(page, steps):
 def main():
     wiki = wikipediaapi.Wikipedia(user_agent='WikiHackathon (https://github.com/karmuslami/wiki-hackathon.git)',
                                   language='en')
-    page = wiki.page('Python_(programming_language)')
-    destination_page = wiki.page('Albert Einstein')
+    random.choice(PAGES_LIST)
+    page = None
+    destination_page = None
+
+    while page == destination_page:
+        page = wiki.page(random.choice(PAGES_LIST))
+        destination_page = wiki.page(random.choice(PAGES_LIST))
+
     steps = 0
 
     print("Welcome to the Wiki-Game.")
