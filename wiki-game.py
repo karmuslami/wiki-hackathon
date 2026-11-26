@@ -43,45 +43,44 @@ def print_list(lst):
         print(f"{index}. {item}")
 
 
-def play_round(page, steps):
-    print("\nYou are on the page: %s" % page.title)
-    print(f"Current count of steps: {steps}\n")
-
-    title_list = get_link_titles(page)
-    print_list(title_list)
-
-    while True:
-        choice = input(f"\nChoose one link (1-{LINKS_SHOWN}): ")
-        if choice.isdigit() and 1 <= int(choice) <= LINKS_SHOWN:
-            return title_list[int(choice) - 1]
-        else:
-            print("Please enter a valid number.")
-
-
-def main():
-    wiki = wikipediaapi.Wikipedia(user_agent='WikiHackathon (https://github.com/karmuslami/wiki-hackathon.git)',
-                                  language='en')
-    random.choice(PAGES_LIST)
-    page = None
-    destination_page = None
-
-    while page == destination_page:
-        page = wiki.page(random.choice(PAGES_LIST))
-        destination_page = wiki.page(random.choice(PAGES_LIST))
-
+def play_round(wiki):
+    page = wiki.page(random.choice(PAGES_LIST))
+    destination_page = wiki.page(random.choice(PAGES_LIST))
     steps = 0
 
-    print("Welcome to the Wiki-Game.")
+    while page.title == destination_page.title:
+        destination_page = wiki.page(random.choice(PAGES_LIST))
+
     print(f"The destination page of this round is: {destination_page.title}")
 
     while True:
         if page.title != destination_page.title:
-            page = wiki.page(play_round(page, steps))
+            print("\nYou are on the page: %s" % page.title)
+            print(f"Current count of steps: {steps}\n")
+
+            title_list = get_link_titles(page)
+            print_list(title_list)
+
+            while True:
+                choice = input(f"\nChoose one link (1-{LINKS_SHOWN}): ")
+                if choice.isdigit() and 1 <= int(choice) <= LINKS_SHOWN:
+                    page = wiki.page(title_list[int(choice) - 1])
+                    break
+                else:
+                    print("Please enter a valid number.")
+
             steps += 1
         else:
             break
 
     print(f"\nCongratualtions. You needed {steps} steps to get to {destination_page.title}.")
+
+
+def main():
+    wiki = wikipediaapi.Wikipedia(user_agent='WikiHackathon (https://github.com/karmuslami/wiki-hackathon.git)',
+                                  language='en')
+    print("Welcome to the Wiki-Game.")
+    play_round(wiki)
 
 
 if __name__ == "__main__":
