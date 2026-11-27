@@ -2,6 +2,7 @@ import wikipediaapi
 import random
 
 LINKS_SHOWN = 50
+STEP_LIMIT = 10
 PAGES_LIST = [
     'Python (programming language)',
     'Albert Einstein',
@@ -56,7 +57,10 @@ def play_round(wiki):
     print(f"The destination page of this round is: {destination_page.title}")
 
     while True:
-        if page.title != destination_page.title:
+        if steps >= STEP_LIMIT:
+            break
+
+        elif page.title != destination_page.title:
             print("\nYou are on the page: %s" % page.title)
             print(f"Current count of steps: {steps}\n")
 
@@ -75,7 +79,11 @@ def play_round(wiki):
         else:
             break
 
-    print(f"\nYou needed {steps} steps to get to {destination_page.title}.")
+    if steps >= STEP_LIMIT:
+        print("You needed too many steps.")
+    else:
+        print(f"\nYou needed {steps} steps to get to {destination_page.title}.")
+
     return steps
 
 
