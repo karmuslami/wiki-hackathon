@@ -108,32 +108,32 @@ def game_over(players):
     print(f"\nThe winner is: {winner}")
 
 
+def get_rounds():
+    while True:
+        rounds = input("How many rounds would you like to play? ")
+
+        if rounds.isdigit() and int(rounds) > 0:
+            return int(rounds)
+        else:
+            print("Please enter a valid number.")
+
+
+def get_player_count():
+    while True:
+        player_count = input("How many players are playing? ")
+
+        if player_count.isdigit() and int(player_count) > 0:
+            return int(player_count)
+        else:
+            print("Please enter a valid number.")
+
+
 def main():
     wiki = wikipediaapi.Wikipedia(user_agent='WikiHackathon (https://github.com/karmuslami/wiki-hackathon.git)',
                                   language='en')
     print("Welcome to the Wiki-Game.")
-
-    # get amount of rounds
-    while True:
-        rounds_raw = input("How many rounds would you like to play? ")
-
-        if rounds_raw.isdigit() and int(rounds_raw) > 0:
-            rounds = int(rounds_raw)
-            break
-        else:
-            print("Please enter a valid number.")
-
-    # get player count
-    while True:
-        player_count_raw = input("How many players are playing? ")
-
-        if player_count_raw.isdigit() and int(player_count_raw) > 0:
-            player_count = int(player_count_raw)
-            break
-        else:
-            print("Please enter a valid number.")
-
-    players = create_players(player_count)
+    rounds = get_rounds()
+    players = create_players(get_player_count())
 
     played_rounds = 0
 
