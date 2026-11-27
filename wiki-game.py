@@ -46,6 +46,8 @@ def print_list(lst):
 def play_round(wiki):
     page = wiki.page(random.choice(PAGES_LIST))
     destination_page = wiki.page(random.choice(PAGES_LIST))
+    #page = wiki.page('Ukulele')
+    #destination_page = wiki.page('Albert Einstein')
     steps = 0
 
     while page.title == destination_page.title:
@@ -62,8 +64,8 @@ def play_round(wiki):
             print_list(title_list)
 
             while True:
-                choice = input(f"\nChoose one link (1-{LINKS_SHOWN}): ")
-                if choice.isdigit() and 1 <= int(choice) <= LINKS_SHOWN:
+                choice = input(f"\nChoose one link (1-{len(title_list)}): ")
+                if choice.isdigit() and 1 <= int(choice) <= len(title_list):
                     page = wiki.page(title_list[int(choice) - 1])
                     break
                 else:
@@ -73,14 +75,79 @@ def play_round(wiki):
         else:
             break
 
-    print(f"\nCongratualtions. You needed {steps} steps to get to {destination_page.title}.")
+    print(f"\nYou needed {steps} steps to get to {destination_page.title}.")
+    return steps
+
+
+def create_players(player_count):
+    players = []
+
+    for i in range(player_count):
+        player_name = input(f"What is your name, Player {i+1}? ")
+        player = {"name": player_name, "total_steps": 0}
+        players.append(player)
+
+    return players
+
+
+def game_over(players):
+    print("\nThe game is over.")
+    print("Here are the results:")
+
+    for player in players:
+        print(f"{player['name']: {player['total_steps']} total steps}")
+
+    max_points = 0
+    winner = None
+
+    for player in players:
+        if player['total_steps'] > max_points:
+            max_points = player['total_steps']
+            winner = player['name']
+
+    print(f"\nThe winner is: {winner}")
 
 
 def main():
     wiki = wikipediaapi.Wikipedia(user_agent='WikiHackathon (https://github.com/karmuslami/wiki-hackathon.git)',
                                   language='en')
     print("Welcome to the Wiki-Game.")
-    play_round(wiki)
+
+    # get amount of rounds
+    while True:
+        rounds_raw = input("How many rounds would you like to play? ")
+
+        if rounds_raw.isdigit() and int(rounds_raw) > 0:
+            rounds = int(rounds_raw)
+            break
+        else:
+            print("Please enter a valid number.")
+
+    # get player count
+    while True:
+        player_count_raw = input("How many players are playing? ")
+
+        if player_count_raw.isdigit() and int(player_count_raw) > 0:
+            player_count = int(player_count_raw)
+            break
+        else:
+            print("Please enter a valid number.")
+
+    players = create_players(player_count)
+
+    played_rounds = 0
+
+    while played_rounds < rounds:
+        print(f"\nRound {played_rounds + 1}")
+
+        for player in players:
+            print(f"\n{player["name"]}, it's your turn.")
+            step_count = play_round(wiki)
+            player["total_steps"] += step_count
+
+        played_rounds += 1
+
+    game_over(players)
 
 
 if __name__ == "__main__":
